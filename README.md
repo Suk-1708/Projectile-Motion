@@ -57,5 +57,18 @@ I found out how the RK4 method works. Since this method was being executed with 
 <img width="1720" height="952" alt="image" src="https://github.com/user-attachments/assets/4e012277-ae8c-4b74-a8a6-1ed6b5774a13" />
 <img width="1693" height="947" alt="image" src="https://github.com/user-attachments/assets/a4628982-506a-4596-b970-f9fd54af137b" />
 
+## Part 6: Drag Implementation
+### What I did:
+I implemented drag into my 3 models. I did this using quadratic drag. For the drag coefficient and the cross sectional area, i used the average area of an apple, and found the drag coefficients on google for an naked apple.  Using quadratic drag i updated the x and y components of acceleration of the projectile at every dt. This happened for each of the models, happening 4 times in a single loop for rk4. Then after this I plotted few graphs to explore the differences between each method. As a reference/analytical curve, i used RK4 with many magnitude smaller dt(1e-5) compared to others.
+
+### Key results:
+Trajectory overlay (dt=0.1): Euler now visibly separates from Heun/RK4 (wider, higher arc). Heun and RK4 nearly overlap, but no longer identically — drag makes the ODE nonlinear, so higher-order methods genuinely begin to diverge from lower-order ones.
+
+Heun vs RK4 error vs time (log scale): direct difference between the two methods, growing from ~10⁻⁶ m near launch to ~1.5×10⁻² m by landing at dt=0.1. Growth is steepest early/late in the flight (high speed → strong drag nonlinearity) and slower near the apex (low speed → weak drag).
+
+Same plot at dt=0.5: the same gap widens to ~0.9 m — demonstrating that RK4's advantage over Heun becomes far more significant as step size increases.
+
+Final landing-error vs dt (log y-axis, corrected for ground-crossing overshoot via linear interpolation): clean, monotonic curves for Euler, Heun, and RK4, correctly ordered (Euler worst, RK4 best) at every dt tested. This is the key convergence result — it shows all three methods' accuracy degrading as dt grows, with RK4 consistently outperforming Heun and Euler at every step size.
+
 
 
