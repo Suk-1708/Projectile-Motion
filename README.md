@@ -71,4 +71,13 @@ Same plot at dt=0.5: the same gap widens to ~0.9 m — demonstrating that RK4's 
 Final landing-error vs dt (log y-axis, corrected for ground-crossing overshoot via linear interpolation): clean, monotonic curves for Euler, Heun, and RK4, correctly ordered (Euler worst, RK4 best) at every dt tested. This is the key convergence result — it shows all three methods' accuracy degrading as dt grows, with RK4 consistently outperforming Heun and Euler at every step size.
 
 
+<img width="1665" height="897" alt="image" src="https://github.com/user-attachments/assets/f132f6ca-157b-46b7-bed9-a0f12a50d4f9" />
+<img width="1710" height="933" alt="image" src="https://github.com/user-attachments/assets/3725c0ed-eff8-42b4-ab0b-87e22f3f3a5f" />
+<img width="1650" height="916" alt="image" src="https://github.com/user-attachments/assets/d07eb139-eff8-4849-8fde-08ebf435f0a0" />
+<img width="1646" height="905" alt="image" src="https://github.com/user-attachments/assets/c79fea5e-5509-4790-be1f-057bbf8c454a" />
+<img width="1606" height="898" alt="image" src="https://github.com/user-attachments/assets/6b80d329-4051-40bd-a91b-d67066bdb9ff" />
+<img width="1758" height="931" alt="image" src="https://github.com/user-attachments/assets/400a1b84-7490-4b80-b727-a51fabe223df" />
+
+
+
 
