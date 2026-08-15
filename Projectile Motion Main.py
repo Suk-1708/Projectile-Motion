@@ -2,19 +2,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import TextBox
 #PJ in a Vacuum
-"""
+
 u = float(input("Enter the Inital Velocity:"))
 theta = np.radians(float(input("Enter the Angle the projectile makes to the horizontal: ")))
 g = float(input("Enter the gravity of your environment: "))
 t = float(input("Enter the time at which you want x and y displacement(in seconds): "))
-print(t)"""
 
+"""
 u = 20
 theta = np.radians(45)
 g = 9.81
 t = 1
 
-
+"""
 
 
 ux =  u * np.cos(theta)
@@ -89,7 +89,7 @@ euler_error = [0]
 
 
 
-def euler(uy, ux,y, x,g, dt):
+def euler(uy, ux,y, x,a, dt):
         
     vel_y = uy - (a * dt)
 
@@ -150,7 +150,7 @@ def time_step(x,y,labels,title_label):
     plt.title(f'{title_label}Step-Size comparison')
 
 
-"""
+
 #_,xy_next_n,_ = heun(10,17.32,0,0,10,0.1)
 # Euler
 maxy = []
@@ -160,15 +160,15 @@ for dt in [0.5,0.1,0.05,0.01]:
 
     h_xy = 0
     h_xx = 0
-    uy =  u * np.sin(theta)
+    uy_euler =  u * np.sin(theta)
     while xy >= 0:
-        uy,xy, xx = euler(uy, ux, xy, xx, g, dt)
+        uy_euler,xy, xx = euler(uy_euler, ux, xy, xx, g, dt)
 
         if xy >= 0:
             euler_t.append(euler_t[-1] + dt)
             euler_x.append(xx)
             euler_y.append(xy)
-            euler_v.append(uy)
+            euler_v.append(uy_euler)
         else:
             continue
 
@@ -206,7 +206,7 @@ plot_pos_time(euler_t,euler_y, "Euler", "blue", ax=axs[0,1])
 axs[0,1].legend()
 
 
-plot_error(euler_t,euler_error,"yeuler","black",ax=axs[1,0])
+plot_error(euler_t,euler_error,"yeuler","black", "analytical",ax=axs[1,0])
 axs[1,0].legend()
 
 
@@ -282,7 +282,7 @@ plot_pos_time(arrt, arry,'Analytical','black', ax=axs2[0,1])
 plot_pos_time(heun_t, heun_y,'Heun','Red', ax=axs2[0,1])
 axs2[0,1].legend()
 
-plot_error(heun_t,heun_error,"yheun","black",ax=axs2[1,0])
+plot_error(heun_t,heun_error,"yheun","black","analytical",ax=axs2[1,0])
 axs2[1,0].legend()
 
 max_height_error(heun_max_y,"Black",ax=axs2[1,1])
@@ -342,14 +342,13 @@ for y in range(len(arry)):
         rk4_error.append(float(arry[y]) - float(rk4_y[y]) )
 
 fig3,axs3 = plt.subplots(figsize=(6, 5))
-plot_error(heun_t,heun_error,"yheun","black",ax=axs3)
-plot_error(euler_t,euler_error,"euler","red",ax=axs3)
-plot_error(rk4_time,rk4_error,"RK4","green",ax=axs3)
+plot_error(heun_t,heun_error,"yheun","black","analytical",ax=axs3)
+plot_error(euler_t,euler_error,"euler","red","analytical",ax=axs3)
+plot_error(rk4_time,rk4_error,"RK4","green","analytical",ax=axs3)
 axs3.set_yscale('log')
 axs3.legend()
 plt.show()
 
-"""
 
 # drag:
 
@@ -378,7 +377,7 @@ def drag_euler(uy, ux, xy,dt,env,proj):
     x = 0
     
     t = [0]
-    s_y = [0]
+    s_y = [xy]
     s_x = [0]
 
     while xy >= 0: 
@@ -400,7 +399,7 @@ def drag_euler(uy, ux, xy,dt,env,proj):
 def drag_heun(uy, ux, xy,dt,env,proj):
     x = 0
     t = [0]
-    s_y = [0]
+    s_y = [xy]
     s_x = [0]
 
     while xy >= 0:
@@ -422,12 +421,12 @@ def drag_heun(uy, ux, xy,dt,env,proj):
 
 def drag_rk4(uy, ux, y,dt,env,proj):
     x = 0
-    rk4_y = [0]
+    rk4_y = [y] 
     rk4_x = [0]
     rk4_time = [0]
     while y >= 0:
         k_ax,k_ay = acceleration(ux,uy,env,proj)
-        rk4_time.append(rk4_time[-1] + dt)
+        
         k1_v = uy
         k1_vx = ux
 
@@ -456,6 +455,7 @@ def drag_rk4(uy, ux, y,dt,env,proj):
         ux = ux + (dt * average_ax)
         rk4_x.append(x)
         rk4_y.append(y)
+        rk4_time.append(rk4_time[-1] + dt)
 
     return rk4_y,rk4_x, rk4_time
 
