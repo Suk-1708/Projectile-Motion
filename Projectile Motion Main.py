@@ -149,7 +149,7 @@ def time_step(x,y,labels,title_label):
     plt.ylabel("y (m)")
     plt.title(f'{title_label}Step-Size comparison')
 
-
+"""
 
 #_,xy_next_n,_ = heun(10,17.32,0,0,10,0.1)
 # Euler
@@ -349,7 +349,7 @@ axs3.set_yscale('log')
 axs3.legend()
 plt.show()
 
-
+"""
 # drag:
 
 env = {"g":9.81, "rho": 1.225}
@@ -403,15 +403,26 @@ def drag_heun(uy, ux, xy,dt,env,proj):
     s_x = [0]
 
     while xy >= 0:
-        ax, ay = acceleration(ux,uy,env,proj)
-        vel_y = uy + (ay * dt)
-        vel_x = ux + (ax * dt) 
-        average_vel_y = (vel_y + uy)/2
-        average_vel_x = (vel_x + ux)/2
-        xy = xy + (average_vel_y * dt)
-        x = x + (average_vel_x * dt)
-        uy = vel_y
-        ux = vel_x
+        ax1, ay1 = acceleration(ux, uy, env, proj)          
+        vx_guess = ux + ax1 * dt                              
+        vy_guess = uy + ay1 * dt
+
+        ax2, ay2 = acceleration(vx_guess, vy_guess, env, proj)  
+
+        avg_ax = (ax1 + ax2) / 2
+        avg_ay = (ay1 + ay2) / 2
+
+        vx_new = ux + avg_ax * dt
+        vy_new = uy + avg_ay * dt
+
+        average_vel_x = (ux + vx_new) / 2
+        average_vel_y = (uy + vy_new) / 2
+
+        xy = xy + average_vel_y * dt
+        x = x + average_vel_x * dt
+
+        uy = vy_new
+        ux = vx_new
 
         t.append(t[-1] + dt)
         s_y.append(xy)
@@ -473,10 +484,11 @@ drag_euler_y, drag_euler_x, drag_euler_t = drag_euler(uy,ux,0,dt, env,proj)
 drag_heun_y, drag_heun_x, drag_heun_t = drag_heun(uy,ux,0,dt, env,proj)
 drag_rk4_y,drag_rk4_x, drag_rk4_time = drag_rk4(uy,ux,0,dt, env,proj)
 
-if dt <= 0.01:
+if len(drag_heun_y) != len(drag_rk4_y):
     drag_heun_rk4 = [0]
 else:
     drag_heun_rk4 = []
+
 for i in range(len(drag_heun_t)):
     drag_heun_rk4.append(abs(drag_heun_y[i] - drag_rk4_y[i])) 
 
@@ -490,6 +502,10 @@ plot_traj(drag_rk4_x,drag_rk4_y, "RK4 with Quadratic Drag", "red", ax=drag_plot1
 plot_traj(drag_refer_x,drag_refer_y, "Reference RK4 with Quadratic Drag", "black", ax=drag_plot1)
 drag_plot1.legend()
 plt.show()
+
+
+
+
 
 drag_plot_2 = plot_error(drag_rk4_time,drag_heun_rk4, "RK4", "black", "Heun")
 drag_plot_2.set_yscale('log')
@@ -506,19 +522,19 @@ dt_error = [0.01, 0.05, 0.2, 0.5]
 for time in dt_error:
     drag_eulert_y, drag_eulert_x, drag_eulert_t = drag_euler(uy,ux,0,time, env,proj)
     drag_euler_error.append(abs(landing_x(drag_eulert_x, drag_eulert_y) - refer_drag_landing))
-    time_step(drag_eulert_x,drag_eulert_y,f"Euler dt={time}","Euler")
+    time_step(drag_eulert_x,drag_eulert_y,f"drag Euler dt={time}","Euler")
 plt.legend()
 plt.show()
 for time in dt_error:
     drag_heunt_y, drag_heunt_x, drag_heunt_t = drag_heun(uy,ux,0,time, env,proj)
     drag_heun_error.append(abs(landing_x(drag_heunt_x, drag_heunt_y) - refer_drag_landing))
-    time_step(drag_heunt_x,drag_heunt_y,f"Heun dt={time}","Heun")
+    time_step(drag_heunt_x,drag_heunt_y,f"drag Heun dtt={time}","Heun")
 plt.legend()
 plt.show()
 for time in dt_error:
     drag_rk4_y, drag_rk4_x, drag_rk4_time = drag_rk4(uy,ux,0,time, env,proj)
     drag_rk4_error.append(abs(landing_x(drag_rk4_x, drag_rk4_y) - refer_drag_landing))
-    time_step(drag_rk4_x,drag_rk4_y,f"RK4 dt={time}","RK4")
+    time_step(drag_rk4_x,drag_rk4_y,f"drag RK4 dt={time}","RK4")
 plt.legend()
 plt.show()
 
