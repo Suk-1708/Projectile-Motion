@@ -78,6 +78,55 @@ Final landing-error vs dt (log y-axis, corrected for ground-crossing overshoot v
 <img width="1606" height="898" alt="image" src="https://github.com/user-attachments/assets/6b80d329-4051-40bd-a91b-d67066bdb9ff" />
 <img width="1758" height="931" alt="image" src="https://github.com/user-attachments/assets/400a1b84-7490-4b80-b727-a51fabe223df" />
 
+### Part 7: Implementation on Earth, mars and moon.
+I decided to implement my drag rk4 model on earth, mars and the moon. This part was mainly integrating a system which uses different gravity values and air density values for different planets(which i got off google), into the rk4 model that i made previously. Due to the moon having 0 air density, the model predicted a graph with no drag, identical to the anaylitical curve in a vacuum. For mars, I learnt that the surface has a 11km thick layer of co2, which decreases with altitude(a decay function). I also included this to vary the drag for different altitude for the mars model.
+
+Here i have compared the 3 models, with same initial parameters. In the 2nd graph, Im only comparing mars and earth to see how big of an effect drag has on the projectile.
+
+<img width="1589" height="900" alt="image" src="https://github.com/user-attachments/assets/1e501d45-549f-4cf0-8dfe-9b39332f9d2c" />
+<img width="1595" height="900" alt="image" src="https://github.com/user-attachments/assets/157db740-3767-4bbb-b4f2-5932a49b187a" />
+
+### Part 8: Adding Wind:
+Added wind to my model. Since wind affects only horziontal componenet in this case, the two winds were relatively easy to integrate into the acceleration function. Here are the graphs showing the wind in effect, when Projectile is at 45m/s, angle of 45 to horziontal and under gravitational acceleration of 9.81.
+
+Unfortunately I was not able to add the Cross wind feature which I wanted to add. It involved adding a z-axis, since cross wind hits projectile perpendicularly. I am running low on time, this project is only supposed to run during holidays before school starts.
+<img width="1600" height="430" alt="image" src="https://github.com/user-attachments/assets/60a35f31-7ec1-441d-b0bb-fc7ae3b7374d" />
+<img width="887" height="507" alt="image" src="https://github.com/user-attachments/assets/b8722f17-6d9f-4ae2-a6d2-7dcd5224b0d8" />
+
+### Part 9 Adaptive time with RK4
+Added adaptive time, so dt shortens for regions where more information is available/lots of change, but increases in regions where less information is available/lack of change. Plotted 2 graphs showing adaptive time, one shows the projectile trajectory with dt shown/marked. YOu can see its not constant like the previous ones. Anohter graph showing clearly how much the time step changes. It works on growth factors and decay factors(depending on error size). Last two graph show KE, PE and Total energy of the projectile with drag and no drag, showcasing that energy is dissipated to the surrounding with drag ( as heat). With no drag, total energy remains constant(graph shows a partial straight line due to error build up of numerical method over 7 minutes and overshooting the ground inaccuracies.)
+
+<img width="1600" height="847" alt="image" src="https://github.com/user-attachments/assets/73ccd152-09f0-4a15-b040-d047caa86a98" />
+<img width="1600" height="899" alt="image" src="https://github.com/user-attachments/assets/020b4ec1-0e0f-4522-90ea-ce7cfe045a38" />
+<img width="1600" height="897" alt="image" src="https://github.com/user-attachments/assets/221ff7b3-ccc8-4405-ba1d-08a58aa0ad94" />
+<img width="738" height="590" alt="image" src="https://github.com/user-attachments/assets/005aa8fa-c95a-40c7-8058-554c993087d1" />
+
+### Part 9 Error analysis
+Tried to show the emperical order of the 3 methods with no drag, but only euler gave me its correct order (1). Heun and RK4 were identical as expected in a vacuum, they had order of 0.93. I researched the reaosn why it was not 2, and found that the landing-point linear interpolation error was the cause of it.
+In the graph you can see how the error decreases with lower dt, and increases as dt increases. Expected.
+<img width="1540" height="784" alt="image" src="https://github.com/user-attachments/assets/e2015afc-f270-4ba7-b326-4a513e6443eb" />
+
+### Part 10 Optimal angle calculator
+Succeeded in making a optimial angle calculator, which calculates the lowest possible angle to horizontal teh projectile should make to reach a target(a distance away) within some tolerance, travelling at a known inital velocity. . I then decided to plot a graph of optimal angle with max range. I also plotted a graph of speed against target/ranges. I used targets 30m, 60m, 45m, 90m, and calculated the lowest possible velocity and the angle which causes projectile to hit the target within tolerance. Originally, I though to loop through each value and try out combinations, which resulted in a very slow program, since the rk4 function was being called over 10000 times, given each call also had a dt = 0.01s, it took around 200s just to output the optimum angle. After that, I switched to programming a binary + tenary search which solved it in much quicker time <25s. To speed it up even more, I used my adaptive time model that i created earlier, this reduced the fixed dt= 0.01, reducing the total number of cycles needed to scan through whole motion
+<img width="788" height="606" alt="image" src="https://github.com/user-attachments/assets/a2fb3d8f-d021-403d-a110-8a1f503298e7" />
+<img width="803" height="657" alt="image" src="https://github.com/user-attachments/assets/acc2c7d0-da9a-48d7-a583-d9d4ef3e0f49" />
+
+### Part 11 Monte Carlo Implementation.
+Monte carlo implementation. Running the simulation over random values of inital velocity and angle and height, to display the probabilities of different range values. This shows how likely the projectile will land at a certain area, which can be set as an target. This is important since projectile motion is never the same, even with same parameters, practically, it will not land exactly at the same spot, mainly because of shifting environments such as air resistance. So calculating ranges for different inital parameters(close to a certain mean) helps identify where the projectile may land(never 100% certain)
+
+<img width="1600" height="850" alt="image" src="https://github.com/user-attachments/assets/a6d3abf5-8ab5-44db-acff-e4a8e27d89ca" />
+<img width="777" height="602" alt="image" src="https://github.com/user-attachments/assets/06ece3b8-eac5-4200-a593-e52b03370d34" />
+
+
+### Part 12 Heatmap
+Completed a Heatmap and collected some data on the programs speed. The heatmap creates a grid of 50 x 50,angle x speed, and represents them using different colours to make it more easier to spot patterns. At each grid, there is one combination of speed and angle. E.g. 50m/s at 12 degrees, the colour shows the projectile range output from these inputs. Yellow represents long range,(as seen on the right of the image). We can clearly see the region at which the range is maximised( range grows with speed). Since drag is also involved in this, we can see that every speed has a omptimised angle which gives it the max range. IF this were to have no drag, all speeds would be optimised at 45 degrees.
+
+I also plotted a graph of optimal angle and speed, whichs hows which angle gives the maximised range at a certain speed. The graph shows that as speed increases, drag increases and so the optimum angle moves away from 45 degrees(the optimum with no drag). Its not a smooth curve due to background noise due to tolerance not being exact.
+
+The final table shows some tests i did which recorded the time the heatmap took to plot, there were few anomolies such as 50x50 one, which doubled from its First try ~60s. This is mainly due to background variance, such as other softwares running on my pc, which are using my cpu.
+<img width="781" height="550" alt="image" src="https://github.com/user-attachments/assets/dd01c783-019e-4991-a6f8-960c1c7854f7" />
+<img width="972" height="158" alt="image" src="https://github.com/user-attachments/assets/d9e10d69-d498-49c0-a831-80eadf9ccd16" />
+<img width="761" height="578" alt="image" src="https://github.com/user-attachments/assets/edb4601c-df82-4e56-b01f-d1fb72554e8e" />
 
 
 
